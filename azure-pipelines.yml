@@ -1,0 +1,29 @@
+pool:
+  vmImage: 'ubuntu-latest'
+
+trigger:
+  branches:
+    include:
+      - refs/heads/*
+      - refs/tags/*
+
+steps:
+- task: CmdLine@2
+  displayName: shellcheck
+  inputs:
+    script: find . -type f -name '*.sh' | xargs shellcheck
+
+- task: CmdLine@2
+  condition: succeeded()
+  displayName: Build image
+  inputs:
+    script: docker build -t shawntoffel/squid-whitelist:$(Build.SourceBranchName) .
+
+- task: Docker@2
+  condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/tags/${{ image }}'))
+  displayName: Docker push
+  inputs:
+    containerRegistry: dockerhub
+    command: push
+    repository: shawntoffel/squid-whitelist
+    tags: $(Build.SourceBranchName)
