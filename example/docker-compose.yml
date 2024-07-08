@@ -1,0 +1,8 @@
+services:
+  squid:
+    build: ../
+    ports:
+      - 3128:3128
+    volumes:
+      - ./safe_domains:/etc/squid/safe_domains
+    restart: unless-stopped
