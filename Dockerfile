@@ -1,8 +1,7 @@
-FROM alpine:3.10.2
-RUN apk add --no-cache sudo squid
+FROM alpine:3.20.1
+RUN apk add --no-cache squid
 COPY squid.conf /etc/squid/squid.conf
-COPY sudoers /etc/sudoers.d/squid
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 USER squid
-ENTRYPOINT [ "sudo", "./entrypoint.sh" ]
+ENTRYPOINT [ "./entrypoint.sh" ]
